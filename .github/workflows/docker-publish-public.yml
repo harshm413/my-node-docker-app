@@ -24,23 +24,21 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    # Step 3: Log in to Amazon ECR Public
+    # Step 3: Use ECR Login Action for Amazon ECR Public (Supports Public ECR)
     - name: Log in to Amazon ECR Public
-      id: ecr-login
-      run: |
-        aws ecr-public get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY }}
+      uses: aws-actions/amazon-ecr-login@v1
 
     # Step 4: Build the Docker image
     - name: Build Docker image
       run: |
-        docker build -t ${{ secrets.ECR_REPOSITORY }}:latest .
+        docker build -t ${{ secrets.ECR_REPOSITORY_2 }}:latest .
 
     # Step 5: Tag the Docker image
     - name: Tag Docker image
       run: |
-        docker tag ${{ secrets.ECR_REPOSITORY }}:latest ${{ secrets.ECR_REPOSITORY }}:latest
+        docker tag ${{ secrets.ECR_REPOSITORY_2 }}:latest ${{ secrets.ECR_REPOSITORY_2 }}:latest
 
     # Step 6: Push the Docker image to Amazon ECR Public
     - name: Push Docker image to Amazon ECR Public
       run: |
-        docker push ${{ secrets.ECR_REPOSITORY }}:latest
+        docker push ${{ secrets.ECR_REPOSITORY_2 }}:latest
