@@ -1,0 +1,28 @@
+---
+- name: Update ECS Service to Use Latest Task Definition
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Register new ECS task definition
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_definition_family }}"
+        container_definitions:
+          - name: "{{ ecs_container_name }}"
+            image: "{{ ecr_image_uri }}"
+            memory: 512
+            cpu: 256
+            essential: true
+        region: "{{ aws_region }}"
+      register: ecs_task_def
+
+    - name: Update ECS service to use new task definition
+      community.aws.ecs_service:
+        cluster: "{{ ecs_cluster }}"
+        service: "{{ ecs_service }}"
+        task_definition: "{{ ecs_task_def.task_definition.arn }}"
+        desired_count: 1  # Update the number of tasks as needed
+        region: "{{ aws_region }}"
+        force_new_deployment: true
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key_id }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key }}"
