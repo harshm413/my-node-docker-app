@@ -1,10 +1,7 @@
 name: Build and Push Docker Image to AWS ECR
 
 on:
-  push:
-    branches:
-      - main  # Adjust the branch to your deployment branch
-  workflow_dispatch: # Allow manual triggering
+  workflow_dispatch:  # Only allow manual triggering of the workflow
 
 jobs:
   build-and-push:
